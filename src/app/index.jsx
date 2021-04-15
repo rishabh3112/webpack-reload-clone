@@ -11,9 +11,7 @@ const classes = {
 const App = () => {
   return (
     <React.StrictMode>
-      <div className={classes.wrapper}>
-        CHANGE ME da wdwd wd IN src/app/insight/index.jsx
-      </div>
+      <div className={classes.wrapper}>CHANGE ME IN src/app/insight/index.jsx</div>
     </React.StrictMode>
   )
 }

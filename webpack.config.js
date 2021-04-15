@@ -1,12 +1,9 @@
 const environment = require('dotenv').config()
 const path = require('path')
-const fs = require('fs')
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const VirtualModulesPlugin = require('webpack-virtual-modules')
-const { ApplicationManifest } = require('./src/core/core.generator.js')
 const ErrorOverlayPlugin = require('error-overlay-webpack-plugin')
 const DefinePlugin = require('webpack').DefinePlugin
 const Dotenv = require('dotenv-webpack')
@@ -16,16 +13,9 @@ if (environment.error) {
 }
 
 module.exports = env => {
-  console.log('Environment variables: ', env)
-  if (!env || !env.app || typeof env.app !== 'string') {
-    throw new Error(
-      '\x1b[31mCannot find application variable, make sure to specify --env.app="application_name"\x1b[0m'
-    )
-  }
-  const manifest = ApplicationManifest(env.app)
   const common = {
     mode: 'development',
-    entry: {}, // generated dynamically based on manifest.application
+    entry: './src/app/index.jsx',
     output: {
       filename: '[name].js',
       path: path.resolve(__dirname, 'dist'),
@@ -36,10 +26,10 @@ module.exports = env => {
         excludeAliases: ['console'],
       }),
       new Dotenv(),
-      // new CleanWebpackPlugin({
-      //   cleanStaleWebpackAssets: false,
-      //   cleanOnceBeforeBuildPatterns: ['**/*'],
-      // }),
+      new CleanWebpackPlugin({
+        cleanStaleWebpackAssets: false,
+        cleanOnceBeforeBuildPatterns: ['**/*'],
+      }),
       new HtmlWebpackPlugin({
         title: '',
         favicon: './favicon.ico',
@@ -49,13 +39,6 @@ module.exports = env => {
       new MiniCssExtractPlugin({
         filename: '[name].alpha.css',
       }),
-      new VirtualModulesPlugin({
-        'src/core/index.js': manifest.coreScript,
-      }),
-      // new VirtualModulePlugin({
-      //   moduleName: 'src/core/index.js',
-      //   contents: manifest.coreScript,
-      // }),
       new ErrorOverlayPlugin(),
       new DefinePlugin({
         VERSION: JSON.stringify(require('./package.json').version),
@@ -160,62 +143,10 @@ module.exports = env => {
               },
             },
           ],
-          // type: 'asset',
-          // parser: {
-          //   dataUrlCondition: {
-          //     maxSize: 65536
-          //   }
-          // }
         },
-        // {
-        //   test: /\.(csv|tsv)$/,
-        //   use: ['csv-loader']
-        // },
-        // {
-        //   test: /\.xml$/,
-        //   use: ['xml-loader'],
-        // },
       ],
     },
   }
 
-  let output = common
-
-  function recursiveIssuer(m) {
-    if (m.issuer) {
-      return recursiveIssuer(m.issuer)
-    }
-    if (m.name) {
-      return m.name
-    }
-    return false
-  }
-
-  {
-    const dir = './src/app/'
-    const app = fs
-      .readdirSync(dir)
-      .filter(
-        el =>
-          ['manifest.json', 'core'].indexOf(el) === -1 && el === manifest.application
-      )
-      .map(name => {
-        return { name, path: dir + name }
-      })
-
-    output = app.reduce((config, app) => {
-      const cfg = { ...config }
-      cfg.entry[app.name] = app.path
-      cfg.optimization.splitChunks.cacheGroups[`${app.name}Style`] = {
-        name: app.name,
-        test: (m, c, entry = app.name) =>
-          m.constructor.name === 'CssModule' && recursiveIssuer(m) === entry,
-        chunks: 'all',
-        enforce: true,
-      }
-      return cfg
-    }, common)
-  }
-
-  return output
+  return common
 }
