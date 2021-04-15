@@ -1,0 +1,40 @@
+{
+  // "editor.semanticHighlighting.enabled": false,
+  "editor.formatOnSaveTimeout": 500,
+  "editor.formatOnSave": true,
+  // "prettier.semi": false,
+  // "prettier.singleQuote": true,
+  // "prettier.jsxSingleQuote": true,
+
+  "editor.codeActionsOnSave": {
+    // "source.fixAll.tslint": true,
+    "source.fixAll.eslint": true
+  }
+  // Enable per-language
+  /*   "[javascriptreact]": {
+    "editor.codeActionsOnSave": {
+      "eslint.autoFixOnSave": true,
+      "source.fixAll.tslint": true
+    }
+  },
+  "[javascript]": {
+    "editor.codeActionsOnSave": {
+      "eslint.autoFixOnSave": true,
+      "source.fixAll.tslint": true
+    }
+  }, */
+  /*  "[typescript]": {
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "eslint.autoFixOnSave": true,
+      "source.fixAll.tslint": true
+    }
+  },
+  "[typescriptreact]": {
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "eslint.autoFixOnSave": true,
+      "source.fixAll.tslint": true
+    }
+  } */
+}
