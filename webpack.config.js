@@ -4,11 +4,10 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 module.exports = {
   mode: 'development',
-  entry: './src/app/index.jsx',
+  entry: './src/app/index.js',
   output: {
     filename: '[name].js',
     path: path.resolve(__dirname, 'dist'),
-    publicPath: '/',
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -21,14 +20,10 @@ module.exports = {
       filename: '[name].css',
     }),
   ],
-  devtool: 'inline-source-map',
   devServer: {
     contentBase: './dist',
     port: 8000,
     openPage: 'http://localhost:8000',
-  },
-  resolve: {
-    extensions: ['.js', '.jsx'],
   },
   module: {
     rules: [
@@ -42,8 +37,8 @@ module.exports = {
         ],
       },
       {
-        test: /\.(css|scss)$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
+        test: /\.(css)$/,
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
     ],
   },
